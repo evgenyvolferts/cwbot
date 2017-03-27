@@ -1,0 +1,37 @@
+#!/usr/bin/php
+<?php
+//error_reporting(E_ALL);
+//ini_set("display_errors", 1);
+
+require_once('bot.php');
+
+// настройки, обязательные для работы бота
+// ---------------------------------------
+// порт демона telegram-cli
+$TelegramCLIDaemonPort = 7313;
+
+// замок персонажа, на котором будет работать бот
+// нужно для автоматической установки защиты
+// допустимые значения - red/blue/yellow/white/black
+$CastleColor = 'red';
+
+// класс игрока, на котором будет работать бот
+// нужно для увеличения характеристик при получении нового уровня
+// допустимые значения - attack/defense
+$CharacterClass = 'attack';
+
+// получение имени пользователя, под которым запускается скрипт
+$CurrentUser = trim(shell_exec('whoami'));
+
+// получение параметра скрипта
+$State = isset($argv[1]) ? $argv[1] : 'status';
+$AdditionalParameter = isset($argv[2]) ? $argv[2] : '';
+
+$TelegramCLIBot = new Bot($State, $CurrentUser, $TelegramCLIDaemonPort);
+$TelegramCLIBot->SetCastle($CastleColor);
+$TelegramCLIBot->SetCharacterClass($CharacterClass);
+$TelegramCLIBot->SetCaptchaFile("/home/eugene/tg/scripts/captcha_texts.txt");
+$TelegramCLIBot->SetCaptchaText($AdditionalParameter);
+$TelegramCLIBot->Run();
+
+?>
