@@ -116,7 +116,6 @@ class Bot {
 	}
 
 	private function MsgSend($Recipient, $Message) {
-		//exec("echo \"msg {$Recipient} '{$Message}'\" | nc localhost {$this->TelegramCLIDaemonPort}");
 		$fp = fsockopen("tcp://127.0.0.1", $this->TelegramCLIDaemonPort, $errno, $errstr);
 		if (!$fp) {
 			echo "ERROR: $errno - $errstr<br />\n";
@@ -441,7 +440,6 @@ class Bot {
 				$out .= "CurrentStatus = " . $this->CurrentStatus();
 				$out .= '\n';
 				$this->MsgSend($this->AdminUser, $out);
-				//echo str_replace('\n', "\n", $out);
 				break;
 			
 		}
