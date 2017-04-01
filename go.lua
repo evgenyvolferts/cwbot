@@ -50,7 +50,13 @@ function on_msg_receive (msg)
 	elseif ((sender ~= 'guest') and (msg.text ~= nil)) then
 		if (string.find(msg.text, '/go')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 caravan_go")
+		elseif (string.find(msg.text, '/intercept')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 caravan_intercept")
+		elseif (string.find(msg.text, 'Нажми /promo и получи')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 character")
 		elseif (string.find(msg.text, 'Храбрый защитник! Где будем держать оборону?')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 defense_castle")
+		elseif (string.find(msg.text, 'Выбери цель для поддержки орбитальной обороны')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 defense_castle")
 		elseif (string.find(msg.text, 'выбери точку атаки и точку защиты')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 arena_a_d")
@@ -66,12 +72,20 @@ function on_msg_receive (msg)
 			os.execute("/home/`whoami`/tg/scripts/automate2 arena_finished")
 		elseif (string.find(msg.text, 'Пока соперник не найден, ты можешь в любой момент отменить поиск поединка')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 arena_searching")
+		elseif (string.find(msg.text, 'Ты отправился изучать загадочную планету')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 cave_active")
 		elseif (string.find(msg.text, 'Ты отправился искать приключения в пещеру')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 cave_active")
+		elseif (string.find(msg.text, 'Ты полетел на встречу неизвестному кораблю')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 forest_active")
 		elseif (string.find(msg.text, 'Ты отправился искать приключения в лес')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 forest_active")
 		elseif (string.find(msg.text, 'Поиск отменен')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 search_cancelled")
+		elseif (string.find(msg.text, 'Статус') and string.find(msg.text, 'В ангаре')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 status_rest")
+		elseif (string.find(msg.text, 'Статус') and string.find(msg.text, 'Оборона')) then
+			os.execute("/home/`whoami`/tg/scripts/automate2 status_defense")
 		elseif (string.find(msg.text, 'Состояние') and string.find(msg.text, 'Отдых')) then
 			os.execute("/home/`whoami`/tg/scripts/automate2 status_rest")
 		elseif (string.find(msg.text, 'Состояние') and string.find(msg.text, 'Защита')) then
