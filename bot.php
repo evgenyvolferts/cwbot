@@ -272,6 +272,12 @@ class Bot {
 				$this->MsgSend($this->ChatWarsBot, "/go");
 				break;
 			
+			// отправка в защиту космического каравана
+			case 'caravan_intercept':
+				sleep(rand(10, 20));
+				$this->MsgSend($this->ChatWarsBot, "/intercept");
+				break;
+			
 			// отправка в лес
 			case 'forest':
 				while ($this->CurrentStatus() != 'inactive') {
