@@ -2,27 +2,71 @@
 
 class Bot {
 	
-	public $Flags = array(
-		'red' => '🇮🇲',
-		'blue' => '🇪🇺',
-		'yellow' => '🇻🇦',
-		'white' => '🇨🇾',
-		'black' => '🇬🇵'
-	);
+//	// нормальные значения
+//	public $Flags = [
+//		'red' => '🇮🇲',
+//		'blue' => '🇪🇺',
+//		'yellow' => '🇻🇦',
+//		'white' => '🇨🇾',
+//		'black' => '🇬🇵'
+//	];
 	
-	public $Attack = array(
+	// значения для 1 апреля
+	public $Flags = [
+		'red' => '⭕️',
+		'blue' => '⚖️',
+		'yellow' => '☠️',
+		'white' => '🌐',
+		'black' => '⚫️'
+	];
+	
+//	// нормальные значения
+//	public $Texts = [
+//		'character' => "🏅Герой",
+//		'defense' => "🛡 Защита",
+//		'attack' => "⚔ Атака",
+//		'cave' => "🕸Пещера",
+//		'caravan' => "🐫ГРАБИТЬ КОРОВАНЫ",
+//		'forest' => "🌲Лес",
+//		'arena_search' => "🔎Поиск соперника",
+//		'arena_cancel_search' => "✖️Отменить поиск",
+//		'increase_attack' => "+1 ⚔Атака",
+//		'increase_defense' => "+1 🛡Защита",
+//		'pet_wash' => "🛁Почистить",
+//		'pet_feed' => "🍼Покормить",
+//		'pet_play' => "⚽️Поиграть"
+//	];
+	
+	// значения для 1 апреля
+	public $Texts = [
+		'character' => "👨‍🚀 Пилот",
+		'defense' => "🎚Оборона",
+		'attack' => "💣Нападение",
+		'cave' => "🔎Изучить планету",
+		'caravan' => "🐫ГРАБИТЬ КОСМИЧЕСКИЕ КОРОВАНЫ",
+		'forest' => "🛰Помочь кораблю",
+		'arena_search' => "🔎Поиск соперника",
+		'arena_cancel_search' => "✖️Отменить поиск",
+		'increase_attack' => "+1 🎯Точность",
+		'increase_defense' => "+1 🕹Маневренность",
+		'pet_wash' => "🛁Почистить",
+		'pet_feed' => "🍼Покормить",
+		'pet_play' => "⚽️Поиграть"
+	];
+	
+	public $Attack = [
 		1 => '🗡в голову',
 		2 => '🗡по корпусу',
 		3 => '🗡по ногам'
-	);
+	];
 	
-	public $Defense = array(
+	public $Defense = [
 		1 => '🛡головы',
 		2 => '🛡корпуса',
 		3 => '🛡ног'
-	);
+	];
 	
-	public $Captcha = array(
+	public $Captcha = [
 		11 => '🍉🍒',	// арбуз + вишня
 		12 => '🍆🥕',	// баклажан + морковь
 		13 => '🌭',	// хотдог
@@ -36,7 +80,7 @@ class Bot {
 		24 => '🐐',	// коза
 		25 => '🐕',	// собака
 		26 => '🐿'	// бурундук
-	);
+	];
 	
 	private $TelegramCLIDaemonPort;
 	private $ChatWarsBot = "user#265204902";
@@ -132,10 +176,10 @@ class Bot {
 
 	private function IncreaseStat() {
 		if ($this->CharacterClass == 'defense') {
-			$this->MsgSend($this->ChatWarsBot, "+1 🛡Защита");
+			$this->MsgSend($this->ChatWarsBot, $this->Texts['increase_defense']);
 		}
 		elseif ($this->CharacterClass == 'attack') {
-			$this->MsgSend($this->ChatWarsBot, "+1 ⚔Атака");
+			$this->MsgSend($this->ChatWarsBot, $this->Texts['increase_attack']);
 		}
 	}
 	
@@ -147,11 +191,11 @@ class Bot {
 			// отправка в защиту
 			case 'defense':
 				if ($this->CurrentStatus() == 'searching_opponent') {
-					$this->MsgSend($this->ChatWarsBot, "✖️Отменить поиск");
+					$this->MsgSend($this->ChatWarsBot, $this->Texts['arena_cancel_search']);
 				}
 				file_put_contents($this->CurrentStatusFile, 'defense');
 				sleep(rand(15, 120));
-				$this->MsgSend($this->ChatWarsBot, "🛡 Защита");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['defense']);
 				break;
 			
 			// отправка флага в защиту своего замка
@@ -169,7 +213,7 @@ class Bot {
 			// отправка в атаку
 			case 'attack':
 				file_put_contents($this->CurrentStatusFile, 'waiting_attack');
-				$this->MsgSend($this->ChatWarsBot, "⚔ Атака");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['attack']);
 				break;
 			
 			// отправка в атаку на синий замок
@@ -219,7 +263,7 @@ class Bot {
 				}
 				file_put_contents($this->CurrentStatusFile, 'waiting_caravan');
 				sleep(rand(5, 180));
-				$this->MsgSend($this->ChatWarsBot, "🐫ГРАБИТЬ КОРОВАНЫ");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['caravan']);
 				break;
 			
 			// отправка в защиту каравана
@@ -240,14 +284,14 @@ class Bot {
 				}
 				file_put_contents($this->CurrentStatusFile, 'waiting_forest');
 				sleep(rand(5, 180));
-				$this->MsgSend($this->ChatWarsBot, "🌲Лес");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['forest']);
 				break;
 			
 			// подтверждение похода в лес получено
 			case 'forest_active':
 				file_put_contents($this->CurrentStatusFile, 'forest_active');
 				sleep(rand(305, 360));
-				$this->MsgSend($this->ChatWarsBot, "🏅Герой");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['character']);
 				break;
 			
 			// отправка в пещеру
@@ -262,27 +306,27 @@ class Bot {
 				}
 				file_put_contents($this->CurrentStatusFile, 'waiting_cave');
 				sleep(rand(5, 180));
-				$this->MsgSend($this->ChatWarsBot, "🕸Пещера");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['cave']);
 				break;
 			
 			// подтверждение похода в пещеру получено
 			case 'cave_active':
 				file_put_contents($this->CurrentStatusFile, 'cave_active');
 				sleep(rand(305, 360));
-				$this->MsgSend($this->ChatWarsBot, "🏅Герой");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['character']);
 				break;
 			
 			// проверка статуса
 			case 'check_status':
 				if (($this->CurrentStatus() != 'inactive') && ($this->CurrentStatus() != 'defense')) {
 					sleep(rand(5, 90));
-					$this->MsgSend($this->ChatWarsBot, "🏅Герой");
+					$this->MsgSend($this->ChatWarsBot, $this->Texts['character']);
 				}
 				break;
 			
 			// запрос профиля героя
 			case 'character':
-				$this->MsgSend($this->ChatWarsBot, "🏅Герой");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['character']);
 				break;
 			
 			// изменение статуса на отдых
@@ -295,7 +339,7 @@ class Bot {
 				if ($this->ArenaTime() && !$this->BattleSoon() && (($this->CurrentStatus() == 'inactive') || ($this->CurrentStatus() == 'defense'))) {
 					file_put_contents($this->CurrentStatusFile, 'waiting_arena');
 					sleep(rand(5, 90));
-					$this->MsgSend($this->ChatWarsBot, "🔎Поиск соперника");
+					$this->MsgSend($this->ChatWarsBot, $this->Texts['arena_search']);
 				}
 				break;
 			
@@ -351,19 +395,19 @@ class Bot {
 			// почистить питомца
 			case 'pet_wash':
 				sleep(rand(30, 300));
-				$this->MsgSend($this->ChatWarsBot, "🛁Почистить");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['pet_wash']);
 				break;
 			
 			// покормить питомца
 			case 'pet_feed':
 				sleep(rand(30, 300));
-				$this->MsgSend($this->ChatWarsBot, "🍼Покормить");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['pet_feed']);
 				break;
 			
 			// поиграть с питомцем
 			case 'pet_play':
 				sleep(rand(30, 300));
-				$this->MsgSend($this->ChatWarsBot, "⚽️Поиграть");
+				$this->MsgSend($this->ChatWarsBot, $this->Texts['pet_play']);
 				break;
 			
 			// антикапча
