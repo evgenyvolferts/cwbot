@@ -1,0 +1,165 @@
+#!/usr/bin/php
+<?php
+
+function ServiceControl($Action, $ActionText) {
+	echo "{$ActionText} bots...\n";
+
+	exec("systemctl {$Action} telegram");
+	
+	$Bots = [];
+	
+	if ($Handle = opendir('/home')) {
+		while (false !== ($Entry = readdir($Handle))) {
+			if ($Entry == 'rustamash') {
+				$Bots[0] = 'tgbot0';
+			}
+			elseif ($Entry != "." && $Entry != ".." && $Entry != "eugene" && $Entry != "tgbot1") {
+				if (preg_match("/(\d)+/u", $Entry, $matches)) {
+					$Key = $matches[0];
+					$Bots[$Key] = $Entry;
+				}
+			}
+		}
+		closedir($Handle);
+	}
+	
+	ksort($Bots);
+	
+	foreach($Bots as $Bot) {
+		echo "{$ActionText} {$Bot}...\n";
+		exec("systemctl {$Action} {$Bot}");
+		sleep(1);
+	}
+	
+	echo "Script finished.\n";
+}
+
+function AddBots($NewBotsAmount) {
+	$BotIDs = [];
+
+	if ($Handle = opendir('/home')) {
+		while (false !== ($Entry = readdir($Handle))) {
+			if (preg_match("/(\d)+/u", $Entry, $matches)) {
+				$Key = $matches[0];
+				$BotIDs[] = $Key;
+			}
+		}
+		closedir($Handle);
+	}
+
+	$StartID = max($BotIDs) + 1;
+	$EndID = $StartID + $NewBotsAmount;
+
+	for ($BotID = $StartID; $BotID < $EndID; $BotID++) {
+		$User = 'tgbot' . $BotID;
+		$Port = $BotID + 7330;
+		echo "Adding user {$User} (tg-daemon on port {$Port})...\n";
+		system("echo '{$User}:{$User}::::/home/{$User}:/bin/bash' | newusers");
+		system("cp -R /home/tgbot1/tg/ /home/{$User}/tg/");
+		system("chown -R {$User}:{$User} /home/{$User}/");
+		$Automate = file_get_contents("/home/{$User}/tg/scripts/automate");
+		$Automate = str_replace('7777', $Port, $Automate);
+		file_put_contents("/home/{$User}/tg/scripts/automate", $Automate);
+		chmod("/home/{$User}/tg/scripts/automate", 0777);
+		file_put_contents("/var/log/{$User}.log", "");
+		chmod("/var/log/{$User}.log", 0666);
+		system("su {$User} -c '/home/eugene/tg/bin/telegram-cli -k tg-server.pub'");
+		$Service = file_get_contents('/home/eugene/tg/scripts/service');
+		$Service = str_replace('%USER%', $User, $Service);
+		$Service = str_replace('%PORT%', $Port, $Service);
+		file_put_contents("/etc/systemd/system/{$User}.service", $Service);
+		system("systemctl daemon-reload");
+		system("systemctl enable {$User}.service");
+		system("systemctl start {$User}.service");
+	}
+}
+
+function RemoveBot($Bot) {
+	echo "Removing service {$Bot}...\n";
+	exec("systemctl stop {$Bot}");
+	usleep(100000);
+	exec("systemctl disable {$Bot}");
+	usleep(100000);
+	exec("rm /etc/systemd/system/{$Bot}.service");
+	usleep(100000);
+	exec("systemctl daemon-reload");
+	usleep(100000);
+	exec("systemctl reset-failed");
+	usleep(100000);
+	echo "Removing user {$Bot}...\n";
+	exec("deluser {$Bot}");
+	usleep(100000);
+	exec("rm -rf /home/{$Bot}");
+	usleep(100000);
+	exec("rm /var/log/{$Bot}.log");
+}
+	
+$Action = '';
+$Command = isset($argv[1]) ? $argv[1] : '';
+
+if (!empty($Command)) {
+	switch ($Command) {
+		case 'start':
+			ServiceControl('start', 'Starting');
+			break;
+		case 'restart':
+			ServiceControl('restart', 'Restarting');
+			break;
+		case 'stop':
+			ServiceControl('stop', 'Stopping');
+			break;
+		case 'add':
+			$NewBotsAmount = isset($argv[2]) ? $argv[2] : 0;
+			
+			if (!$NewBotsAmount) {
+				die("No bot amount specified\n");
+			}
+			else {
+				AddBots($NewBotsAmount);
+			}
+			break;
+		case 'remove':
+			$BotToRemove = isset($argv[2]) ? $argv[2] : 0;
+			
+			if (!$BotToRemove) {
+				die("No bot specified\n");
+			}
+			else {
+				if (is_numeric($BotToRemove)) {
+					RemoveBot('tgbot' . $BotToRemove);
+				}
+				elseif ($BotToRemove == 'all') {
+					$Bots = [];
+	
+					if ($Handle = opendir('/home')) {
+						while (false !== ($Entry = readdir($Handle))) {
+							if ($Entry != "." && $Entry != ".." && $Entry != "eugene" && $Entry != "tgbot1" && $Entry != "rustamash") {
+								if (preg_match("/(\d)+/u", $Entry, $matches)) {
+									$Key = $matches[0];
+									$Bots[$Key] = $Entry;
+								}
+							}
+						}
+						closedir($Handle);
+					}
+					
+					ksort($Bots);
+					
+					foreach($Bots as  $Bot) {
+						RemoveBot($Bot);
+					}
+				}
+			}
+			break;
+	}
+}
+else {
+	echo "Unknown command\n";
+}
+
+
+
+
+	
+	
+?>

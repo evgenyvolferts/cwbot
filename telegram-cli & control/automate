@@ -3,7 +3,7 @@
 //error_reporting(E_ALL);
 //ini_set("display_errors", 1);
 
-require_once('bot.php');
+require_once('/home/eugene/tg/scripts/bot.php');
 
 // настройки, обязательные для работы бота
 // ---------------------------------------
@@ -30,7 +30,7 @@ $AdditionalParameter = isset($argv[2]) ? $argv[2] : '';
 $TelegramCLIBot = new Bot($State, $CurrentUser, $TelegramCLIDaemonPort);
 $TelegramCLIBot->SetCastle($CastleColor);
 $TelegramCLIBot->SetCharacterClass($CharacterClass);
-$TelegramCLIBot->SetCaptchaFile("/home/eugene/tg/scripts/captcha_texts.txt");
+$TelegramCLIBot->SetCaptchaFile('/home/eugene/tg/scripts/captcha_texts.txt');
 $TelegramCLIBot->SetCaptchaText($AdditionalParameter);
 $TelegramCLIBot->Run();
 

@@ -1,0 +1,33 @@
+#!/usr/bin/php
+<?php
+
+$Bots = [];
+$AllowedFolders = ['.', '..', 'eugene', 'rustamash', 'tgbot4', 'tgbot5'];
+		
+if ($Handle = opendir('/home')) {
+	while (false !== ($Entry = readdir($Handle))) {
+		if (!in_array($Entry, $AllowedFolders)) {
+			if (preg_match("/(\d)+/u", $Entry, $matches)) {
+				$Key = $matches[0];
+				$Bots[$Key] = $Entry;
+			}
+		}
+	}
+	closedir($Handle);
+}
+
+ksort($Bots);
+
+foreach($Bots as $Bot) {
+	echo "Removing user {$Bot}...\n";
+	exec("deluser {$Bot}");
+	usleep(100000);
+	exec("rm -rf /home/{$Bot}");
+	usleep(100000);
+	exec("rm /var/log/{$Bot}.log");
+	usleep(100000);
+	exec("rm /var/spool/cron/crontabs/{$Bot}");
+	usleep(100000);
+}
+
+?>

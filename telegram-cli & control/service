@@ -1,0 +1,15 @@
+[Unit]
+Description=%USER%
+Wants=network.target
+After=network.target
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+User=%USER%
+ExecStart=/home/eugene/tg/bin/telegram-cli --wait-dialog-list -v --disable-auto-accept --disable-readline --disable-colors --rsa-key=/home/%USER%/tg/tg-server.pub --lua-script=/home/eugene/tg/scripts/go.lua --logname=/var/log/%USER%.log --tcp-port=%PORT% --daemonize
+KillSignal=SIGKILL
+KillMode=process
+Restart=on-failure
