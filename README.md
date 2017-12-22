@@ -4,16 +4,10 @@ db
 ---
 дамп базы данных для помидорки и телеграм-ботов
 
-pomidorka
+pomidorka (/var/www или где удобно)
 ---
-/var/www или где удобно
 сама помидорка, сервис отправки телеграм сообщений
 
-telegram-cli & control
+telegram-cli & control (~tg/scripts)
 ---
-~tg/scripts
-go.lua скрипт для telegram-cli
-botctl - скрипт для добавления/удаления/запуска/остановки ботов
-service - файл настроек systemd телеграм сервиса
-captcha_texts.txt варианты капч
-и другие служебные скрипты
+go.lua скрипт для telegram-cli; botctl - скрипт для добавления/удаления/запуска/остановки ботов; service - файл настроек systemd телеграм сервиса; captcha_texts.txt варианты капч и другие служебные скрипты
